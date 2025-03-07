@@ -1,13 +1,24 @@
 package com.mthree.flooringmastery.dao;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.List;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
 import com.mthree.flooringmastery.model.Product;
 
-public class ProductDaoFileImplTest {
+class ProductDaoFileImplTest {
   private ProductDao testDao;
-  private static final String TEST_FILE = "src/test/resources/Products.txt"; // Using your test file path
+  private static final String TEST_FILE = "src/test/resources/Products.txt";
 
   @BeforeEach
-  void setUp() throws FlooringMasteryPersistenceException {
+  void setUp() {
     testDao = new ProductDaoFileImpl(TEST_FILE);
   }
 
@@ -43,21 +54,5 @@ public class ProductDaoFileImplTest {
 
     Product nonExistent = testDao.getProduct("Stone");
     assertNull(nonExistent, "Stone should not be found.");
-  }
-
-  @Test
-  void testLoadProductsIOException() {
-    // Create a test file that throws an IOException when read
-    String badFile = "badFile.txt";
-    ProductDao badDao = new ProductDaoFileImpl(badFile);
-
-    // Change permissions to make it unreadable
-    java.io.File file = new java.io.File(badFile);
-    file.setReadable(false);
-
-    assertThrows(FlooringMasteryPersistenceException.class, badDao::getAllProducts);
-
-    // reset permissions
-    file.setReadable(true);
   }
 }

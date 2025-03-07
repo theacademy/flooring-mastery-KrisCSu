@@ -1,5 +1,7 @@
 package com.mthree.flooringmastery.ui;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Scanner;
 
 public class UserIOConsoleImpl implements UserIO {
@@ -54,12 +56,20 @@ public class UserIOConsoleImpl implements UserIO {
   @Override
   public int readInt(String prompt, int min, int max) {
     int num;
-    do {
-      print(prompt);
-      num = Integer.parseInt(sc.nextLine());
-    } while (num < min || num > max);
+    while (true){
+      try {
+        print(prompt);
+            num = Integer.parseInt(sc.nextLine().trim());
 
-    return num;
+            if (num >= min && num <= max) {
+                return num;
+            } else {
+                print("Invalid number! Please enter a number between " + min + " and " + max + ".");
+            }
+      } catch (Exception e) {
+        print("Invalid input! Try again!");
+      }
+    }
   }
 
   @Override
@@ -85,4 +95,29 @@ public class UserIOConsoleImpl implements UserIO {
     print(prompt);
     return sc.nextLine();
   }
+
+  @Override
+    public BigDecimal readBigDecimal(String prompt) {
+        print(prompt);
+        while (true) {
+            try {
+                return new BigDecimal(sc.nextLine()).setScale(2, RoundingMode.HALF_UP);
+            } catch (NumberFormatException e) {
+                print("Invalid input. Please enter a valid decimal number.");
+            }
+        }
+    }
+
+
+    @Override
+    public BigDecimal readBigDecimal(String prompt, BigDecimal min) {
+        BigDecimal num;
+        do {
+            num = readBigDecimal(prompt + " (Minimum: " + min + "):");
+            if (num.compareTo(min) < 0){
+              print("Invalid number! Try again!");
+            }
+        } while (num.compareTo(min) < 0);
+        return num;
+    }
 }
